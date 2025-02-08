@@ -1,0 +1,65 @@
+﻿@page "/"
+@using Labs.Lib
+
+<PageTitle>Triangle Area Calculator | Lab 1</PageTitle>
+
+<h1>Triangle Area Calculator | Lab 1</h1>
+
+<div class="mb-3">
+    <label for="method" class="form-label">Select Calculation Method</label>
+    <select id="method" class="form-select" @onchange="MethodChange">
+        <option value="Height">By Height</option>
+        <option value="Coordinates">By Coordinates</option>
+        <option value="Medians">By Medians</option>
+        <option value="Circles">By Circles</option>
+        <option value="Bisectors">By Bisectors</option>
+    </select>
+</div>
+
+<div class="mb-3 d-flex flex-row gap-2">
+    @foreach (var input in inputs) {
+        <label class="form-label">
+            @input.Label 
+            <input type="number" min="0" @bind="input.Value" class="form-control" />
+        </label>
+    }
+</div>
+
+<button class="btn btn-primary w-100" @onclick="Calculate">Calculate</button>
+
+@if (result != null)
+{
+    <p class="mt-3 text-center fw-bold">@result</p>
+}
+
+@code {
+    private string? result = null;
+    private TriangleAreaForm form;
+    private IReadOnlyList<FormInput> inputs;
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        form = new TriangleAreaByHeightsForm();
+        inputs = form.Inputs;
+        await base.SetParametersAsync(parameters);
+    }
+
+    private void MethodChange(ChangeEventArgs e)
+    {
+        form = e.Value switch
+        {
+            "Height" => new TriangleAreaByHeightsForm(),
+            "Coordinates" => new TriangleAreaByCoordinatesForm(),
+            "Medians" => new TriangleAreaByMediansForm(),
+            "Circles" => new TriangleAreaByCirclesForm(),
+            "Bisectors" => new TriangleAreaByBisectorsForm(),
+            _ => form
+        };
+        inputs = form.Inputs;
+    }
+
+    private void Calculate() 
+    {
+        result = form.ResultMessage();
+    }
+}
