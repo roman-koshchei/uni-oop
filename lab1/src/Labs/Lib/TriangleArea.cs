@@ -3,15 +3,15 @@ using System.Drawing;
 
 namespace Labs.Lib;
 
-public interface ITriangleArea
-{
-    double Calculate();
-}
-
 public class FormInput(string label)
 {
     public string Label { get; set; } = label;
     public double Value { get; set; } = 0;
+}
+
+public interface ITriangleArea
+{
+    double Calculate();
 }
 
 public abstract class TriangleAreaForm(params FormInput[] inputs)
