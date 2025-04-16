@@ -1,0 +1,57 @@
+﻿@page "/"
+<PageTitle>Coffee Machine</PageTitle>
+
+<h1>Coffee Machine</h1>
+
+<h3>Select Your Coffee</h3>
+<select @bind="beverageOption" @bind:after="UpdateBeverage">
+    <option value="Espresso">Espresso</option>
+    <option value="Americano">Americano</option>
+    <option value="Latte">Latte</option>
+    <option value="Cappuccino">Cappuccino</option>
+    <option value="Cocoa">Cocoa</option>
+    <option value="Hot Chocolate">Hot Chocolate</option>
+</select>
+
+<h3>Sugar</h3>
+<select @bind="sugarOpiton" @bind:after="UpdateBeverage">
+    <option value="None">No Sugar</option>
+    <option value="Little">Little Sugar</option>
+    <option value="Lot">Lot of Sugar</option>
+</select>
+
+<h3>Order Summary</h3>
+<p>Ingredients: @OrderIngredients</p>
+<p>Total Price: @OrderPrice.ToString("C")</p>
+
+@code {
+    private string beverageOption = "Espresso";
+    private string sugarOpiton = "None";
+
+    private IBeverage beverage = new Espresso();
+    private string OrderIngredients => beverage.Ingredients();
+    private float OrderPrice => beverage.Cost();
+
+    private void UpdateBeverage()
+    {
+        beverage = beverageOption switch
+        {
+            "Espresso" => new Espresso(),
+            "Americano" => new HotWater(new Espresso()),
+            "Latte" => new Milk(new Espresso(), Amount.Lot),
+            "Cappuccino" => new MilkFoam(new Milk(new Espresso(), Amount.Little), Amount.Lot),
+            "Cocoa" => new Milk(new Cocoa(), Amount.Lot),
+            "Hot Chocolate" => new Milk(new Chocolate(), Amount.Lot),
+
+            _ => throw new ArgumentException($"Unsupported beverage: {beverageOption}")
+        };
+
+        beverage = sugarOpiton switch
+        {
+            "Little" => new Sugar(beverage, Amount.Little),
+            "Lot" => new Sugar(beverage, Amount.Lot),
+            _ => beverage,
+        };
+    }
+
+}
