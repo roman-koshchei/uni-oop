@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -56,7 +57,7 @@ public partial class MainWindow : Window
         }
     }
 
-    private void BtnCalculateMultiThread_Click(object sender, RoutedEventArgs e)
+    private async void BtnCalculateMultiThread_Click(object sender, RoutedEventArgs e)
     {
         if (string.IsNullOrWhiteSpace(txtFolderPath.Text) || !Directory.Exists(txtFolderPath.Text))
         {
@@ -64,10 +65,10 @@ public partial class MainWindow : Window
             return;
         }
 
-        _ = CalculateFolderSize(true);
+        await CalculateFolderSize(true);
     }
 
-    private void BtnCalculateSingleThread_Click(object sender, RoutedEventArgs e)
+    private async void BtnCalculateSingleThread_Click(object sender, RoutedEventArgs e)
     {
         if (string.IsNullOrWhiteSpace(txtFolderPath.Text) || !Directory.Exists(txtFolderPath.Text))
         {
@@ -75,7 +76,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        _ = CalculateFolderSize(false);
+        await CalculateFolderSize(false);
     }
 
     private void BtnCancel_Click(object sender, RoutedEventArgs e)
@@ -90,7 +91,6 @@ public partial class MainWindow : Window
     {
         // Reset state
         calculateState = new CalculateState();
-        progressBar.Value = 0;
         txtResult.Text = "";
         SafeUpdateStatusBarText("Starting calculation...");
         SetControlsState(false);
@@ -145,13 +145,10 @@ public partial class MainWindow : Window
     {
         try
         {
-            state.IncrementRecursionLevel();
-
             var directoryInfo = new DirectoryInfo(folderPath);
             DirectoryInfo[] subdirectories = [];
 
             subdirectories = directoryInfo.GetDirectories();
-            var recursionLevel = state.RecursionLevel;
             // Start subderictories tasks
             var subdirectoriesTasks = subdirectories.Select(dir => CalculateFolderSizeMultiThreadAsync(
                  state, dir.FullName
@@ -188,8 +185,6 @@ public partial class MainWindow : Window
     {
         try
         {
-            state.IncrementRecursionLevel();
-
             // Process files
             foreach (var file in Directory.GetFiles(folderPath))
             {

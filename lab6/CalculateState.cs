@@ -33,12 +33,4 @@ public class CalculateState
     {
         Interlocked.Increment(ref processedFoldersCount);
     }
-
-    private int recursionLevel = 0;
-    public int RecursionLevel => Volatile.Read(ref recursionLevel);
-
-    public void IncrementRecursionLevel()
-    {
-        Interlocked.Increment(ref recursionLevel);
-    }
 }
