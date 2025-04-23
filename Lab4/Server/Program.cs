@@ -127,6 +127,10 @@ try
                             Console.WriteLine($"Closing connection with client {handler.RemoteEndPoint}");
                             runClient = false;
                         }
+                        else
+                        {
+                            await SendString(handler, $"Command {command.Name} isn't supported");
+                        }
                     }
                     catch (ParseCommandException ex)
                     {

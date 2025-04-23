@@ -5,8 +5,8 @@ using System.Text;
 Console.WriteLine("Client app started.");
 Console.WriteLine("help - get all commands");
 Console.WriteLine("Please enter commands in the next format:");
-Console.WriteLine("command --arg-name-1 value --arg-name-2 another value");
 Console.WriteLine("Example of correct command:");
+Console.WriteLine("command --arg-name-1 value --arg-name-2 another value");
 Console.WriteLine("add --name Roman Koshchei --grade 100");
 Console.WriteLine("Value goes as long as it meets end of the command or another key, no need for \"");
 
